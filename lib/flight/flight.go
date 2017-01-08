@@ -3,6 +3,7 @@ package flight
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"sync"
 
@@ -134,6 +135,7 @@ func (c *Info) FlashWarning(message string) {
 
 //FlashError saves an error flash and logs the error.
 func (c *Info) FlashError(err error) {
+	log.Printf("There has been an error [%]", err)
 	c.Sess.AddFlash(flash.Info{Message: "An error occurred on the server. Please try again later.", Class: flash.Error})
 	c.Sess.Save(c.R, c.W)
 }

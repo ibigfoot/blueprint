@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/go-sql-driver/mysql"
+	"github.com/lib/pq"
 )
 
 var (
@@ -15,12 +15,12 @@ var (
 
 // Item defines the model.
 type Item struct {
-	ID        uint32         `db:"id"`
-	Name      string         `db:"name"`
-	UserID    uint32         `db:"user_id"`
-	CreatedAt mysql.NullTime `db:"created_at"`
-	UpdatedAt mysql.NullTime `db:"updated_at"`
-	DeletedAt mysql.NullTime `db:"deleted_at"`
+	ID        uint32      `db:"id"`
+	Name      string      `db:"name"`
+	UserID    uint32      `db:"user_id"`
+	CreatedAt pq.NullTime `db:"created_at"`
+	UpdatedAt pq.NullTime `db:"updated_at"`
+	DeletedAt pq.NullTime `db:"deleted_at"`
 }
 
 // Connection is an interface for making queries.
@@ -36,8 +36,8 @@ func ByID(db Connection, ID string, userID string) (Item, bool, error) {
 	err := db.Get(&result, fmt.Sprintf(`
 		SELECT id, name, user_id, created_at, updated_at, deleted_at
 		FROM %v
-		WHERE id = ?
-			AND user_id = ?
+		WHERE id = $1
+			AND user_id = $2
 			AND deleted_at IS NULL
 		LIMIT 1
 		`, table),
@@ -51,7 +51,7 @@ func ByUserID(db Connection, userID string) ([]Item, bool, error) {
 	err := db.Select(&result, fmt.Sprintf(`
 		SELECT id, name, user_id, created_at, updated_at, deleted_at
 		FROM %v
-		WHERE user_id = ?
+		WHERE user_id = $1
 			AND deleted_at IS NULL
 		`, table),
 		userID)
@@ -64,7 +64,7 @@ func Create(db Connection, name string, userID string) (sql.Result, error) {
 		INSERT INTO %v
 		(name, user_id)
 		VALUES
-		(?,?)
+		($1,$2)
 		`, table),
 		name, userID)
 	return result, err
@@ -72,13 +72,18 @@ func Create(db Connection, name string, userID string) (sql.Result, error) {
 
 // Update makes changes to an existing item.
 func Update(db Connection, name string, ID string, userID string) (sql.Result, error) {
+
+	fmt.Printf("UPDATE %v SET name = $1 WHERE id = $2 AND user_id = $3 AND deleted_at IS NULL LIMIT 1\n", table)
+	fmt.Printf("$1 [%v]\n", name)
+	fmt.Printf("$2 [%v]\n", ID)
+	fmt.Printf("$3 [%v]\n", userID)
+
 	result, err := db.Exec(fmt.Sprintf(`
 		UPDATE %v
-		SET name = ?
-		WHERE id = ?
-			AND user_id = ?
+		SET name = $1
+		WHERE id = $2
+			AND user_id = $3
 			AND deleted_at IS NULL
-		LIMIT 1
 		`, table),
 		name, ID, userID)
 	return result, err
@@ -88,8 +93,8 @@ func Update(db Connection, name string, ID string, userID string) (sql.Result, e
 func DeleteHard(db Connection, ID string, userID string) (sql.Result, error) {
 	result, err := db.Exec(fmt.Sprintf(`
 		DELETE FROM %v
-		WHERE id = ?
-			AND user_id = ?
+		WHERE id = $1
+			AND user_id = $2
 			AND deleted_at IS NULL
 		`, table),
 		ID, userID)
@@ -101,10 +106,9 @@ func DeleteSoft(db Connection, ID string, userID string) (sql.Result, error) {
 	result, err := db.Exec(fmt.Sprintf(`
 		UPDATE %v
 		SET deleted_at = NOW()
-		WHERE id = ?
-			AND user_id = ?
+		WHERE id = $1
+			AND user_id = $2
 			AND deleted_at IS NULL
-		LIMIT 1
 		`, table),
 		ID, userID)
 	return result, err
