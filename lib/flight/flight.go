@@ -3,7 +3,6 @@ package flight
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"sync"
 
@@ -102,7 +101,7 @@ func (c *Info) Redirect(urlStr string) {
 // saves an error flash. Returns true if form is valid.
 func (c *Info) FormValid(fields ...string) bool {
 	if valid, missingField := form.Required(c.R, fields...); !valid {
-		c.Sess.AddFlash(flash.Info{"Field missing: " + missingField, flash.Warning})
+		c.Sess.AddFlash(flash.Info{Message: "Field missing: " + missingField, Class: flash.Warning})
 		c.Sess.Save(c.R, c.W)
 		return false
 	}
@@ -117,25 +116,24 @@ func (c *Info) Repopulate(v map[string]interface{}, fields ...string) {
 
 // FlashSuccess saves a success flash.
 func (c *Info) FlashSuccess(message string) {
-	c.Sess.AddFlash(flash.Info{message, flash.Success})
+	c.Sess.AddFlash(flash.Info{Message: message, Class: flash.Success})
 	c.Sess.Save(c.R, c.W)
 }
 
 // FlashNotice saves a notice flash.
 func (c *Info) FlashNotice(message string) {
-	c.Sess.AddFlash(flash.Info{message, flash.Notice})
+	c.Sess.AddFlash(flash.Info{Message: message, Class: flash.Notice})
 	c.Sess.Save(c.R, c.W)
 }
 
 // FlashWarning saves a warning flash.
 func (c *Info) FlashWarning(message string) {
-	c.Sess.AddFlash(flash.Info{message, flash.Warning})
+	c.Sess.AddFlash(flash.Info{Message: message, Class: flash.Warning})
 	c.Sess.Save(c.R, c.W)
 }
 
 //FlashError saves an error flash and logs the error.
 func (c *Info) FlashError(err error) {
-	log.Println(err)
-	c.Sess.AddFlash(flash.Info{"An error occurred on the server. Please try again later.", flash.Error})
+	c.Sess.AddFlash(flash.Info{Message: "An error occurred on the server. Please try again later.", Class: flash.Error})
 	c.Sess.Save(c.R, c.W)
 }

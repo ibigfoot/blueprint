@@ -3,6 +3,7 @@ package register
 
 import (
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/ibigfoot/blueprint/lib/flight"
@@ -68,6 +69,7 @@ func Store(w http.ResponseWriter, r *http.Request) {
 		_, err = user.Create(c.DB, firstName, lastName, email, password)
 		// Will only error if there is a problem with the query
 		if err != nil {
+			log.Println("*** ", err)
 			c.FlashError(err)
 		} else {
 			c.FlashSuccess("Account created successfully for: " + email)
@@ -75,6 +77,7 @@ func Store(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else if err != nil { // Catch all other errors
+		log.Println("*** ", err)
 		c.FlashError(err)
 	} else { // Else the user already exists
 		c.FlashError(errors.New("Account already exists for: " + email))

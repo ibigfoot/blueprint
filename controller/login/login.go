@@ -52,7 +52,7 @@ func Store(w http.ResponseWriter, r *http.Request) {
 
 	// Determine if user exists
 	if noRows {
-		c.FlashWarning("Password is incorrect")
+		c.FlashWarning("Password is incorrect - no rows")
 	} else if err != nil {
 		// Display error message
 		c.FlashError(err)
@@ -72,7 +72,7 @@ func Store(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		c.FlashWarning("Password is incorrect")
+		c.FlashWarning("Password is incorrect - password hash doesn't match")
 	}
 
 	// Show the login page again
