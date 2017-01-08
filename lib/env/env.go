@@ -11,7 +11,7 @@ import (
 	"github.com/blue-jay/core/jsonconfig"
 	"github.com/blue-jay/core/server"
 	"github.com/blue-jay/core/session"
-	"github.com/blue-jay/core/storage/driver/mysql"
+	"github.com/blue-jay/core/storage/driver/postgresql"
 	"github.com/blue-jay/core/view"
 )
 
@@ -21,15 +21,15 @@ import (
 
 // Info structures the application settings.
 type Info struct {
-	Asset      asset.Info    `json:"Asset"`
-	Email      email.Info    `json:"Email"`
-	Form       form.Info     `json:"Form"`
-	Generation generate.Info `json:"Generation"`
-	MySQL      mysql.Info    `json:"MySQL"`
-	Server     server.Info   `json:"Server"`
-	Session    session.Info  `json:"Session"`
-	Template   view.Template `json:"Template"`
-	View       view.Info     `json:"View"`
+	Asset      asset.Info      `json:"Asset"`
+	Email      email.Info      `json:"Email"`
+	Form       form.Info       `json:"Form"`
+	Generation generate.Info   `json:"Generation"`
+	Postgresql postgresql.Info `json:"Postgres"`
+	Server     server.Info     `json:"Server"`
+	Session    session.Info    `json:"Session"`
+	Template   view.Template   `json:"Template"`
+	View       view.Info       `json:"View"`
 	path       string
 }
 

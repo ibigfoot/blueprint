@@ -27,7 +27,10 @@ func RegisterServices(config *env.Info) {
 	}
 
 	// Connect to the MySQL database
-	mysqlDB, _ := config.MySQL.Connect(true)
+	//mysqlDB, _ := config.MySQL.Connect(true)
+
+	// connect to the PostgresDB
+	pgsqlDB, _ := config.Postgresql.Connect(true)
 
 	// Load the controller routes
 	controller.LoadRoutes()
@@ -56,7 +59,7 @@ func RegisterServices(config *env.Info) {
 	flight.StoreConfig(*config)
 
 	// Store the database connection in flight
-	flight.StoreDB(mysqlDB)
+	flight.StoreDB(pgsqlDB)
 
 	// Store the csrf information
 	flight.StoreXsrf(xsrf.Info{
