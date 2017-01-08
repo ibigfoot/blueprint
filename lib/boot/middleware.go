@@ -4,10 +4,10 @@ package boot
 import (
 	"net/http"
 
-	"github.com/blue-jay/blueprint/middleware/logrequest"
-	"github.com/blue-jay/blueprint/middleware/rest"
 	"github.com/blue-jay/core/router"
 	"github.com/gorilla/context"
+	"github.com/ibigfoot/blueprint/middleware/logrequest"
+	"github.com/ibigfoot/blueprint/middleware/rest"
 )
 
 // SetUpMiddleware contains the middleware that applies to every request.
